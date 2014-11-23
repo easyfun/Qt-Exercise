@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     fileMenu->addAction(exitAction);
 
     setWindowTitle(tr("Language: %1").arg(tr("English")));
-    statusBar()->showMessage(tr("Internationlization Example"));
+    statusBar()->showMessage(tr("Internationalization Example"));
 
     if (tr("LTR")=="RTL")
     {
