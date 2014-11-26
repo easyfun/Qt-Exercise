@@ -22,9 +22,14 @@ private:
     void createToolBar();
     void createStatusBar();
 
-//    void readSettings();
-//    void writeSettings();
-//    bool maybeSave();
+    void readSettings();
+    void writeSettings();
+    bool maybeSave();
+    void connectSignalSlot();
+
+    void setCurrentFile(const QString& fileName);
+protected:
+    void closeEvent(QCloseEvent *event);
 
 private:
     QPlainTextEdit* textEdit;

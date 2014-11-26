@@ -12,6 +12,10 @@ MainWindow::MainWindow(QWidget *parent)
     createMenu();
     createToolBar();
     createStatusBar();
+    connectSignalSlot();
+
+    readSettings();
+    setCurrentFile("");
 }
 
 MainWindow::~MainWindow()
@@ -93,14 +97,68 @@ void MainWindow::createToolBar()
     fileToolBar->addAction(newAct);
     fileToolBar->addAction(openAct);
     fileToolBar->addAction(saveAct);
+    fileToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
+    addToolBar(Qt::TopToolBarArea, fileToolBar);
 
     editToolBar = addToolBar(tr("Edit"));
     editToolBar->addAction(cutAct);
     editToolBar->addAction(copyAct);
     editToolBar->addAction(pasteAct);
+    editToolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::RightToolBarArea);
+    addToolBar(Qt::LeftToolBarArea, editToolBar);
 }
 
 void MainWindow::createStatusBar()
 {
     statusBar()->showMessage(tr("Read"));
+}
+
+void MainWindow::connectSignalSlot()
+{
+    connect(exitAct,SIGNAL(triggered()), this, SLOT(close()));
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings("Trolltech", "Application Example");
+    QPoint pos = settings.value("pos", QPoint(200,200)).toPoint();
+    QSize size = settings.value("size", QSize(400,400)).toSize();
+    resize(size);
+    move(pos);
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("Trolltech", "Application Example");
+    settings.setValue("pos", pos());
+    settings.setValue("size", size());\
+}
+
+bool MainWindow::maybeSave()
+{
+    if (textEdit->document()->isModified())
+    {
+        QMessageBox::StandardButton ret;
+        ret = QMessageBox::warning(this, tr("Information"),
+                                   tr("The document has been modified.\nDo you want to save your changes?"),
+                                   QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    }
+    return true;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    writeSettings();
+}
+
+void MainWindow::setCurrentFile(const QString &fileName)
+{
+    curFile = fileName;
+    textEdit->document()->setModified(false);
+    setWindowModified(false);
+
+    QString shownNaem = curFile;
+    if (curFile.isEmpty())
+        shownNaem = "untitled.txt";
+    setWindowFilePath(shownNaem);
 }
