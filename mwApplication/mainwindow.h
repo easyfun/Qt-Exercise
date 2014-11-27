@@ -16,6 +16,10 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    bool save();
+    bool saveAs();
+
 private:
     void createAction();
     void createMenu();
@@ -28,6 +32,8 @@ private:
     void connectSignalSlot();
 
     void setCurrentFile(const QString& fileName);
+    bool saveFile(const QString& fileName);
+
 protected:
     void closeEvent(QCloseEvent *event);
 
