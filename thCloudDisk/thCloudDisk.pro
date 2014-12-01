@@ -14,7 +14,9 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         thclouddisk.cpp\
-    thBasic/thframe.cpp
+    thBasic/thframe.cpp \
+    thBasic/testwidget.cpp
 
 HEADERS  += thclouddisk.h\
-    thBasic/thframe.h
+    thBasic/thframe.h \
+    thBasic/testwidget.h

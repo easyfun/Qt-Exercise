@@ -8,6 +8,7 @@ class QToolBar;
 class QStatusBar;
 class QWidget;
 class QVBoxLayout;
+class QLabel;
 QT_END_NAMESPACE
 
 class ThFrame : public QFrame
@@ -48,16 +49,17 @@ private:
     DragDirection getDragDirection(int x, int y);
 
     // 伸缩窗口
-    void dragThFrame(DragDirection eDirection);
+    void dragThFrame(int x, int y, DragDirection edirection);
 
 private:
     bool    leftMousePress;
-    QPoint  leftTopPosition;
+    QPoint  globalStartPosition;
     DragDirection edragDirection;
 
     QToolBar    *thToolBar;
     QStatusBar  *thStatusBar;
     QWidget     *thCentralWidget;
+    QLabel      *labelPoint;
 
 };
 

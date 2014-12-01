@@ -6,19 +6,26 @@ ThFrame::ThFrame(QWidget *parent)
 {
     // init member data
     leftMousePress = false;
+    edragDirection = eNormal;
 
     // set up all child widgets
     thToolBar = new QToolBar;
+    thToolBar->setMouseTracking(true);
     thToolBar->setFixedHeight(40);
 
     thCentralWidget = new QWidget;
-
+    thCentralWidget->setMouseTracking(true);
     thStatusBar = new QStatusBar;
+    thStatusBar->setMouseTracking(true);
+
+    labelPoint = new QLabel(tr("Point:x=%1 y=%2"));
+    labelPoint->setMouseTracking(true);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
     // set layout
     mainLayout->addWidget(thToolBar);
+    mainLayout->addWidget(labelPoint);
     mainLayout->addWidget(thCentralWidget);
     mainLayout->addWidget(thStatusBar);
 
@@ -29,6 +36,7 @@ ThFrame::ThFrame(QWidget *parent)
     // set mainwindow
     setGeometry(300, 300, 400, 300);
     setWindowFlags(Qt::FramelessWindowHint);
+    setMouseTracking(true);
 //    setStyleSheet("QFrame {background-color:black;border:1px solid black;}");
 
 }
@@ -39,10 +47,9 @@ void ThFrame::mousePressEvent(QMouseEvent *event)
     if (Qt::LeftButton == event->button())
     {
         leftMousePress = true;
-        leftTopPosition = event->pos();
+        globalStartPosition = event->globalPos();
     }
     event->ignore();
-//    QFrame::mousePressEvent(event);
 }
 
 void ThFrame::mouseReleaseEvent(QMouseEvent *event)
@@ -50,9 +57,13 @@ void ThFrame::mouseReleaseEvent(QMouseEvent *event)
     if (Qt::LeftButton == event->button())
     {
         leftMousePress = false;
+//        if (eNormal != edragDirection)
+//        {
+//            edragDirection = eNormal;
+//            setCursorStyle(edragDirection);
+//        }
     }
     event->ignore();
-//    QFrame::mouseReleaseEvent(event);
 }
 
 void ThFrame::mouseMoveEvent(QMouseEvent *event)
@@ -60,17 +71,28 @@ void ThFrame::mouseMoveEvent(QMouseEvent *event)
     // 移动窗口
     if (leftMousePress)
     {
-        move(event->globalPos() - leftTopPosition);
+        if (eNormal == edragDirection)
+        {
+            // 移动窗口
+            QRect rectFrame = geometry();
+            move(rectFrame.left()+event->globalX()-globalStartPosition.x(),
+                 rectFrame.top()+event->globalY()-globalStartPosition.y());
+            globalStartPosition = event->globalPos();
+        }
+        else
+        {
+            // 调整窗口大小
+            dragThFrame(event->globalX(),event->globalY(),edragDirection);
+            globalStartPosition = event->globalPos();//QPoint(event->globalX(), event->globalY());
+        }
     }
     // 调整窗口大小
     else
     {
-        edragDirection = getDragDirection(event->x(), event->y());
+        edragDirection = getDragDirection(event->globalX(), event->globalY());
         setCursorStyle(edragDirection);
-//        dragThFrame(edragDirection);
     }
     event->ignore();
-//    QFrame::mouseMoveEvent(event);
 }
 
 void ThFrame::keyPressEvent(QKeyEvent *event)
@@ -104,12 +126,12 @@ void ThFrame::setCursorStyle(DragDirection eDirection)
 
     case eTopLeft:
     case eBottomRight:
-        setCursor(Qt::SizeBDiagCursor);
+        setCursor(Qt::SizeFDiagCursor);
         break;
 
     case eTopRight:
     case eBottomLeft:
-        setCursor(Qt::SizeFDiagCursor);
+        setCursor(Qt::SizeBDiagCursor);
         break;
 
     case eNormal:
@@ -123,20 +145,29 @@ void ThFrame::setCursorStyle(DragDirection eDirection)
 
 ThFrame::DragDirection ThFrame::getDragDirection(int x, int y)
 {
-    QRect rect = frameGeometry();
+    QRect rect = geometry();
     int left = rect.left();
     int right = rect.right();
     int top = rect.top();
     int bottom = rect.bottom();
 
+/*    labelPoint->setText(tr("left=%1,right=%2,top=%3,bottom=%4,Point:x=%5,y=%6")
+                        .arg(left)
+                        .arg(right)
+                        .arg(top)
+                        .arg(bottom)
+                        .arg(x)
+                        .arg(y));*/
+
     if (left-3 <= x && x <= left+3 && top-3 <= y && y <= top+3)
         return eTopLeft;
 
-    if (left-3 <= x && x <= left+3 && top+3 <= y && y < bottom-3)
+    if (left-3 <= x && x <= left+3 && top+3 < y && y < bottom-3)
         return eLeft;
 
     if (left-3 <= x && x <= left+3 && bottom-3 <= y && y <= bottom+3)
         return eBottomLeft;
+
 
     if (left+3 < x && x < right-3 && top-3 <= y && y <= top+3)
         return eTop;
@@ -144,10 +175,11 @@ ThFrame::DragDirection ThFrame::getDragDirection(int x, int y)
     if (left+3 < x && x < right-3 && bottom-3 <= y && y <= bottom+3)
         return eBottom;
 
-    if (right-3 <= x && x <= right+3 && top-3 <= y && y <= top+3)
-        return eTopLeft;
 
-    if (right-3 <= x && x <= right+3 && top-3 < y && y < top+3)
+    if (right-3 <= x && x <= right+3 && top-3 <= y && y <= top+3)
+        return eTopRight;
+
+    if (right-3 <= x && x <= right+3 && top+3 < y && y < bottom-3)
         return eRight;
 
     if (right-3 <= x && x <= right+3 && bottom-3 <= y && y <= bottom+3)
@@ -157,7 +189,57 @@ ThFrame::DragDirection ThFrame::getDragDirection(int x, int y)
 
 }
 
-void ThFrame::dragThFrame(DragDirection eDirection)
+void ThFrame::dragThFrame(int x, int y, DragDirection edirection)
 {
+    //计算偏差
+    int dX = x - globalStartPosition.x();
+    int dY = y - globalStartPosition.y();
+    //获得主窗口位置信息
+    QRect rectWindow = geometry();
+    //判别方向
+    if(edirection == eTop)
+    {
+        rectWindow.setTop(rectWindow.top()+dY);
+    }
+    else if(edirection == eBottom)
+    {
+        rectWindow.setBottom(rectWindow.bottom()+dY);
+    }
+    else if(edirection == eLeft)
+    {
+        rectWindow.setLeft(rectWindow.left()+dX);
+    }
+    else if(edirection == eRight)
+    {
+        rectWindow.setRight(rectWindow.right()+dX);
+    }
+    else if (edirection == eTopLeft)
+    {
+        rectWindow.setTop(rectWindow.top() + dY);
+        rectWindow.setLeft(rectWindow.left() + dX);
+    }
+    else if (edirection == eBottomRight)
+    {
+        rectWindow.setBottom(rectWindow.bottom() + dY);
+        rectWindow.setRight(rectWindow.right() + dX);
+    }
+    else if (edirection == eTopRight)
+    {
+        rectWindow.setTop(rectWindow.top() + dY);
+        rectWindow.setRight(rectWindow.right() + dX);
+    }
+    else if (edirection == eBottomLeft)
+    {
+        rectWindow.setBottom(rectWindow.bottom() + dY);
+        rectWindow.setLeft(rectWindow.left() + dX);
+    }
 
+
+    if(rectWindow.width()< minimumWidth() || rectWindow.height()<minimumHeight())
+    {
+        return;
+    }
+
+    // 重新设置窗口位置为新位置信息
+    setGeometry(rectWindow);
 }
