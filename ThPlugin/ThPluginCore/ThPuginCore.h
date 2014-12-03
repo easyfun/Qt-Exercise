@@ -58,4 +58,22 @@ protected:
 
 };
 
+////////////////////////////////////////////////////////
+// 插件运行时
+struct ThPluginClass
+{
+    char    *m_pszClassName;
+    int     m_nObjectSize;
+    int     m_nOnlyOneObject;
+    void    *(*m_pfnCreatePluginObject)();
+    void    *createThPuginObject()
+    {
+        return (0 != m_pfnCreatePluginObject) ? m_pfnCreatePluginObject() : 0;
+    }
+};
+
+#define THPLUGIN_CLASS(ThPlugin_Name) ((ThPluginClass *)(&ThPlugin_Name::thpluginclass##ThPlugin_Name))
+#define THPLUGIN_CREATEOBJECT(ThPlugin_Name, pTPC) ((ThPlugin_Name *)pTPC->createThPluginObject())
+
+
 #endif // THPUGINCORE_H
