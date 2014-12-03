@@ -65,8 +65,8 @@ struct ThPluginClass
     char    *m_pszClassName;
     int     m_nObjectSize;
     int     m_nOnlyOneObject;
-    void    *(*m_pfnCreatePluginObject)();
-    void    *createThPuginObject()
+    void*   (*m_pfnCreatePluginObject)();
+    void*   createThPuginObject()
     {
         return (0 != m_pfnCreatePluginObject) ? m_pfnCreatePluginObject() : 0;
     }
@@ -75,5 +75,18 @@ struct ThPluginClass
 #define THPLUGIN_CLASS(ThPlugin_Name) ((ThPluginClass *)(&ThPlugin_Name::thpluginclass##ThPlugin_Name))
 #define THPLUGIN_CREATEOBJECT(ThPlugin_Name, pTPC) ((ThPlugin_Name *)pTPC->createThPluginObject())
 
+#define DECLARE_THPLUGINCLASS(ThPlugin_Name)    \
+    public:\
+    static const ThPluginClass thpluginclass##ThPlugin_Name;\
+    virtual ThPluginClass* getThPluginClass() const;\
+    static void* createThPluginObject();
+
+#define IMPLEMENT_THPLUGINCLASS(ThPlugin_Name, OnlyOneObject)\
+    const ThPluginClass ThPlugin_Name::thpluginclass##ThPlugin_Name=\
+    { #ThPlugin_Name,sizeof(class ThPlugin_Name),OnlyOneObject, createThPluginObject };\
+    ThPluginClass* ThPlugin_Name::getThPluginClass() const\
+    { return THPLUGIN_CLASS(ThPlugin_Name);}\
+    void* ThPlugin_Name::createThPluginObject()\
+    { return new ThPlugin_Name;}
 
 #endif // THPUGINCORE_H
