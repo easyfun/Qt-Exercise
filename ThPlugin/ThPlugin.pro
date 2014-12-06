@@ -14,8 +14,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         dialog.cpp \
-    thplugin.cpp
+    thplugin.cpp \
+    PageView/pageviewmath.cpp
 
 HEADERS  += dialog.h \
     ThPluginCore/ThPuginCore.h \
-    thplugin.h
+    thplugin.h \
+    PageView/pageviewmath.h
