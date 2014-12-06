@@ -9,6 +9,8 @@ class QLabel;
 class QStackedWidget;
 QT_END_NAMESPACE
 
+class PageViewMath;
+
 class Dialog : public QMainWindow
 {
     Q_OBJECT
@@ -22,6 +24,7 @@ private:
     QLabel      *pageMath;
     QLabel      *pageEnglish;
     QStackedWidget  *stackedWidget;
+    QWidget *pageViewMath;
 };
 
 #endif // DIALOG_H
