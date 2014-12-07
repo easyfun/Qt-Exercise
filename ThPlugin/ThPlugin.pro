@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,9 +15,9 @@ TEMPLATE = app
 SOURCES += main.cpp\
         dialog.cpp \
     thplugin.cpp \
-    PageView/pageviewmath.cpp
+    PageView/pageviewmath.cpp \
+    ThPluginCore/ThPuginCore.cpp
 
 HEADERS  += dialog.h \
-    ThPluginCore/ThPuginCore.h \
     thplugin.h \
     PageView/pageviewmath.h
