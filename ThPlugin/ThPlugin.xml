@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<content>
+	<ThPlugin>
+		<item filename="ThPluginPageView.dll"/>
+	</ThPlugin>
+
+	<listwidget>
+		<item id="pageViewComputer" title="计算机"/>
+	</listwidget>
+</content>

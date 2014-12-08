@@ -31,13 +31,15 @@ public:
     void    initConnect();
     bool    ReadXml();
 
+public:
+
 private:
     QListWidget *listWidget;
     QLabel      *pageMath;
     QLabel      *pageEnglish;
     QStackedWidget  *stackedWidget;
 
-    ThPlugin    m_ThPluginInline;
+//    ThPlugin    m_ThPluginInline;
     QList<IThPlugin *>  m_listThPlugin;
     QMap<const char *, ThPluginClass*> m_mapID2ThPluginClass;
     QMap<const char *, ThPluginClass*> m_mapID2ThPluginObject;
