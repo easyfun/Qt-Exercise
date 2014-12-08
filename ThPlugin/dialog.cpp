@@ -14,6 +14,7 @@ Dialog::Dialog(QWidget *parent)
 
 Dialog::~Dialog()
 {
+    // 析构飞了，很奇怪
 /*    while (!m_listDLL.isEmpty()) {
         QLibrary* pDLL = m_listDLL.takeFirst();
         if (pDLL->isLoaded())
