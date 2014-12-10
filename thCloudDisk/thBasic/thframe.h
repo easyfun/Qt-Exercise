@@ -10,6 +10,7 @@ class QWidget;
 class QVBoxLayout;
 class QLabel;
 QT_END_NAMESPACE
+class ThTitleBar;
 
 class ThFrame : public QFrame
 {
@@ -42,8 +43,13 @@ public:
     };
 
 private:
+    void initData();
+    void initUI();
+    void initConnect();
+
+
     // 伸缩窗口大小鼠标样式
-    void setCursorStyle(DragDirection eDirection);
+    void setCursorStyle(DragDirection edirection);
 
     // 获得伸缩方向
     DragDirection getDragDirection(int x, int y);
@@ -56,7 +62,7 @@ private:
     QPoint  globalStartPosition;
     DragDirection edragDirection;
 
-    QToolBar    *thToolBar;
+    ThTitleBar  *thTitleBar;
     QStatusBar  *thStatusBar;
     QWidget     *thCentralWidget;
     QLabel      *labelPoint;

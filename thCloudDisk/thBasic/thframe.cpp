@@ -1,17 +1,28 @@
 #include <QtGui>
 #include "thframe.h"
+#include "thtitlebar.h"
 
 ThFrame::ThFrame(QWidget *parent)
     : QFrame(parent)
 {
+    initData();
+    initUI();
+    initConnect();
+}
+
+void ThFrame::initData()
+{
     // init member data
     leftMousePress = false;
     edragDirection = eNormal;
+}
 
+void ThFrame::initUI()
+{
     // set up all child widgets
-    thToolBar = new QToolBar;
-    thToolBar->setMouseTracking(true);
-    thToolBar->setFixedHeight(40);
+    thTitleBar = new ThTitleBar;
+    thTitleBar->setMouseTracking(true);
+    thTitleBar->setCloseButtonVisible(false);
 
     thCentralWidget = new QWidget;
     thCentralWidget->setMouseTracking(true);
@@ -24,7 +35,7 @@ ThFrame::ThFrame(QWidget *parent)
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
     // set layout
-    mainLayout->addWidget(thToolBar);
+    mainLayout->addWidget(thTitleBar);
     mainLayout->addWidget(labelPoint);
     mainLayout->addWidget(thCentralWidget);
     mainLayout->addWidget(thStatusBar);
@@ -41,6 +52,10 @@ ThFrame::ThFrame(QWidget *parent)
 
 }
 
+void ThFrame::initConnect()
+{
+
+}
 
 void ThFrame::mousePressEvent(QMouseEvent *event)
 {
@@ -110,9 +125,9 @@ void ThFrame::keyPressEvent(QKeyEvent *event)
 }
 
 
-void ThFrame::setCursorStyle(DragDirection eDirection)
+void ThFrame::setCursorStyle(DragDirection edirection)
 {
-    switch(eDirection)
+    switch(edirection)
     {
     case eTop:
     case eBottom:
