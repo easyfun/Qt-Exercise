@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>skin/icons/appbar.app.png</file>
+        <file>skin/icons/appbar.close.png</file>
+        <file>skin/icons/appbar.clothes.shirt.png</file>
+        <file>skin/icons/appbar.control.down.png</file>
+        <file>skin/icons/appbar.minus.png</file>
+    </qresource>
+</RCC>

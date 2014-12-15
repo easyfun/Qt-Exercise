@@ -1,17 +1,27 @@
 #include <QtGui>
 #include "thframe.h"
+#include "thtitlebar.h"
 
 ThFrame::ThFrame(QWidget *parent)
     : QFrame(parent)
 {
+    initData();
+    initUI();
+    initConnect();
+}
+
+void ThFrame::initData()
+{
     // init member data
     leftMousePress = false;
     edragDirection = eNormal;
+}
 
+void ThFrame::initUI()
+{
     // set up all child widgets
-    thToolBar = new QToolBar;
-    thToolBar->setMouseTracking(true);
-    thToolBar->setFixedHeight(40);
+    thTitleBar = new ThTitleBar;
+    thTitleBar->setMouseTracking(true);
 
     thCentralWidget = new QWidget;
     thCentralWidget->setMouseTracking(true);
@@ -24,7 +34,7 @@ ThFrame::ThFrame(QWidget *parent)
     QVBoxLayout* mainLayout = new QVBoxLayout;
 
     // set layout
-    mainLayout->addWidget(thToolBar);
+    mainLayout->addWidget(thTitleBar);
     mainLayout->addWidget(labelPoint);
     mainLayout->addWidget(thCentralWidget);
     mainLayout->addWidget(thStatusBar);
@@ -34,13 +44,17 @@ ThFrame::ThFrame(QWidget *parent)
     setLayout(mainLayout);
 
     // set mainwindow
-    setGeometry(300, 300, 400, 300);
+    setGeometry(100, 100, 800, 600);
     setWindowFlags(Qt::FramelessWindowHint);
     setMouseTracking(true);
-//    setStyleSheet("QFrame {background-color:black;border:1px solid black;}");
+//    setStyleSheet("QFrame {background-color:blue;border:0px solid white;}");
 
 }
 
+void ThFrame::initConnect()
+{
+
+}
 
 void ThFrame::mousePressEvent(QMouseEvent *event)
 {
@@ -110,9 +124,9 @@ void ThFrame::keyPressEvent(QKeyEvent *event)
 }
 
 
-void ThFrame::setCursorStyle(DragDirection eDirection)
+void ThFrame::setCursorStyle(DragDirection edirection)
 {
-    switch(eDirection)
+    switch(edirection)
     {
     case eTop:
     case eBottom:
@@ -159,30 +173,30 @@ ThFrame::DragDirection ThFrame::getDragDirection(int x, int y)
                         .arg(x)
                         .arg(y));*/
 
-    if (left-3 <= x && x <= left+3 && top-3 <= y && y <= top+3)
+    if (left <= x && x <= left+1 && top <= y && y <= top+1)
         return eTopLeft;
 
-    if (left-3 <= x && x <= left+3 && top+3 < y && y < bottom-3)
+    if (left <= x && x <= left+1 && top+1 < y && y < bottom-3)
         return eLeft;
 
-    if (left-3 <= x && x <= left+3 && bottom-3 <= y && y <= bottom+3)
+    if (left <= x && x <= left+1 && bottom-1 <= y && y <= bottom)
         return eBottomLeft;
 
 
-    if (left+3 < x && x < right-3 && top-3 <= y && y <= top+3)
+    if (left+3 < x && x < right-3 && top <= y && y <= top+1)
         return eTop;
 
-    if (left+3 < x && x < right-3 && bottom-3 <= y && y <= bottom+3)
+    if (left+3 < x && x < right-3 && bottom-1 <= y && y <= bottom)
         return eBottom;
 
 
-    if (right-3 <= x && x <= right+3 && top-3 <= y && y <= top+3)
+    if (right-1 <= x && x <= right && top <= y && y <= top+1)
         return eTopRight;
 
-    if (right-3 <= x && x <= right+3 && top+3 < y && y < bottom-3)
+    if (right-1 <= x && x <= right && top+3 < y && y < bottom-3)
         return eRight;
 
-    if (right-3 <= x && x <= right+3 && bottom-3 <= y && y <= bottom+3)
+    if (right-1 <= x && x <= right && bottom-3 <= y && y <= bottom)
         return eBottomRight;
 
     return eNormal;
